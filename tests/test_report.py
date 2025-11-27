@@ -1055,7 +1055,7 @@ class SummaryTest(UsingModulesMixin, CoverageTest):
         assert self.line_count(report) == 4
         report_lines = report.split("\n")
         assert report_lines[2] == "| mymissing.py |       14 |        3 |     79% |   3-4, 10 |"
-        assert report_lines[3] == "|    **TOTAL** |   **14** |    **3** | **79%** |           |"
+        assert report_lines[3] == "| **TOTAL**    |   **14** |    **3** | **79%** |           |"
 
         assert self.get_report(cov, output_format="total") == "79\n"
         assert self.get_report(cov, output_format="total", precision=2) == "78.57\n"
