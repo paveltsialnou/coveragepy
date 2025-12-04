@@ -57,38 +57,26 @@ def count_contributors() -> int:
     return num_others
 
 
-def get_classifiers(version_info: tuple[int, int, int, str, int]) -> list[str]:
-    """Build the list of classifiers"""
-    # PYVERSIONS
-    classifier_list = textwrap.dedent("""\
-        Environment :: Console
-        Intended Audience :: Developers
-        Operating System :: OS Independent
-        Programming Language :: Python
-        Programming Language :: Python :: 3
-        Programming Language :: Python :: 3.10
-        Programming Language :: Python :: 3.11
-        Programming Language :: Python :: 3.12
-        Programming Language :: Python :: 3.13
-        Programming Language :: Python :: 3.14
-        Programming Language :: Python :: 3.15
-        Programming Language :: Python :: Free Threading :: 3 - Stable
-        Programming Language :: Python :: Implementation :: CPython
-        Programming Language :: Python :: Implementation :: PyPy
-        Topic :: Software Development :: Quality Assurance
-        Topic :: Software Development :: Testing
-    """).splitlines()
-
-    if version_info[3] == "alpha":
-        devstat = "3 - Alpha"
-    elif version_info[3] in ["beta", "candidate"]:
-        devstat = "4 - Beta"
-    else:
-        assert version_info[3] == "final"
-        devstat = "5 - Production/Stable"
-    classifier_list.append(f"Development Status :: {devstat}")
-
-    return classifier_list
+# PYVERSIONS
+CLASSIFIERS = textwrap.dedent("""\
+    Development Status :: 5 - Production/Stable
+    Environment :: Console
+    Intended Audience :: Developers
+    Operating System :: OS Independent
+    Programming Language :: Python
+    Programming Language :: Python :: 3
+    Programming Language :: Python :: 3.10
+    Programming Language :: Python :: 3.11
+    Programming Language :: Python :: 3.12
+    Programming Language :: Python :: 3.13
+    Programming Language :: Python :: 3.14
+    Programming Language :: Python :: 3.15
+    Programming Language :: Python :: Free Threading :: 3 - Stable
+    Programming Language :: Python :: Implementation :: CPython
+    Programming Language :: Python :: Implementation :: PyPy
+    Topic :: Software Development :: Quality Assurance
+    Topic :: Software Development :: Testing
+""").splitlines()
 
 
 # The names of .pth files matter because they are read in lexicographic order.
@@ -221,7 +209,7 @@ setup_args = dict(
     keywords="code coverage testing",
     license="Apache-2.0",
     license_files=["LICENSE.txt"],
-    classifiers=get_classifiers(version_data["version_info"]),
+    classifiers=CLASSIFIERS,
     url="https://github.com/coveragepy/coveragepy",
     project_urls={
         "Documentation": version_data["__url__"],
