@@ -67,7 +67,8 @@ jobs:
 
     # Only run coverage if Python files or this workflow changed.
     needs: changed
-    if: ${{ needs.changed.outputs.run_coverage == 'true' }}
+    if:
+      needs.changed.outputs.run_coverage == 'true'
 
     env:
       MATRIX_ID: "${{ matrix.python-version }}.${{ matrix.os }}"
