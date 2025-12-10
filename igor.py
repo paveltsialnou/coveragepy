@@ -231,7 +231,7 @@ def do_combine_html():
     import coverage
 
     os.environ["COVERAGE_HOME"] = os.getcwd()
-    cov = coverage.Coverage(config_file="metacov.ini")
+    cov = coverage.Coverage(config_file="metacov.ini", messages=True)
     cov.load()
     cov.combine()
     cov.save()

@@ -17,7 +17,7 @@ import glob
 import hashlib
 import os.path
 from collections.abc import Iterable
-from typing import Callable
+from typing import Callable, Literal
 
 from coverage.exceptions import CoverageException, NoDataError
 from coverage.files import PathAliases
@@ -95,6 +95,30 @@ def combinable_files(data_file: str, data_paths: Iterable[str] | None = None) ->
     return sorted(files_to_combine)
 
 
+def hash_for_data_file(f: str) -> bytes:
+    """Get the hash of the data in the file."""
+    with open(f, "rb") as fobj:
+        hasher = hashlib.new("sha3_256", usedforsecurity=False)
+        hasher.update(fobj.read())
+    return hasher.digest()
+
+
+class DataFileClassifier:
+    """Track what files to combine and which to skip."""
+
+    def __init__(self) -> None:
+        self.file_hashes: set[bytes] = set()
+
+    def classify(self, f: str) -> Literal["combine", "skip"]:
+        """Determine whether to combine or skip this file."""
+        sha = hash_for_data_file(f)
+        if sha in self.file_hashes:
+            return "skip"
+        else:
+            self.file_hashes.add(sha)
+            return "combine"
+
+
 def combine_parallel_data(
     data: CoverageData,
     aliases: PathAliases | None = None,
@@ -140,7 +164,7 @@ def combine_parallel_data(
     else:
         map_path = functools.cache(aliases.map)
 
-    file_hashes = set()
+    classifier = DataFileClassifier()
     combined_any = False
 
     for f in files_to_combine:
@@ -156,20 +180,15 @@ def combine_parallel_data(
         except ValueError:
             # ValueError can be raised under Windows when os.getcwd() returns a
             # folder from a different drive than the drive of f, in which case
-            # we print the original value of f instead of its relative path
+            # we print the original value of f instead of its relative path.
             rel_file_name = f
 
-        with open(f, "rb") as fobj:
-            hasher = hashlib.new("sha3_256", usedforsecurity=False)
-            hasher.update(fobj.read())
-            sha = hasher.digest()
-            combine_this_one = sha not in file_hashes
+        file_action = classifier.classify(f)
 
         delete_this_one = not keep
-        if combine_this_one:
+        if file_action == "combine":
             if data._debug.should("dataio"):
                 data._debug.write(f"Combining data file {f!r}")
-            file_hashes.add(sha)
             try:
                 new_data = CoverageData(f, debug=data._debug)
                 new_data.read()
