@@ -265,6 +265,7 @@ def do_combine_html():
     )
     total = cov.html_report(show_contexts=show_contexts)
     print(f"Total: {total:.3f}%")
+    cov.json_report()
 
 
 def do_test_with_core(core, *runner_args):

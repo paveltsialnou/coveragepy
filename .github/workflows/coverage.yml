@@ -223,6 +223,15 @@ jobs:
           set -xe
           python igor.py combine_html
 
+      - name: "Check targets"
+        run: |
+          # Maybe someday goals will be a real feature
+          python -m pip install wcmatch
+          # Very crude check that nothing catastrophic has happened.
+          python lab/goals.py --group 90 "coverage/*.py" "tests/*.py"
+          # Absolutely all of our test code should be covered.
+          python lab/goals.py --file 100 "tests/test_*.py"
+
       - name: "Upload HTML report"
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
         with:
