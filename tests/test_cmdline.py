@@ -12,9 +12,10 @@ import re
 import sys
 import textwrap
 
-from unittest import mock
-from typing import Any
 from collections.abc import Mapping
+from pathlib import Path
+from typing import Any
+from unittest import mock
 
 import pytest
 
@@ -1331,11 +1332,10 @@ class CmdLineWithFilesTest(BaseCmdLineTest):
             """)
 
     def test_debug_data_with_no_data_file(self) -> None:
-        data = self.make_data_file()
         self.command_line("debug data")
         assert self.stdout() == textwrap.dedent(f"""\
             -- data ------------------------------------------------------
-            path: {data.data_filename()}
+            path: {Path(".").resolve() / ".coverage"}
             No data collected: file doesn't exist
             """)
 

@@ -240,6 +240,7 @@ class CoverageTest(
         """Write some data into a coverage data file."""
         data = coverage.CoverageData(basename=basename, suffix=suffix)
         assert lines is None or arcs is None
+        assert lines is not None or arcs is not None
         if lines:
             data.add_lines(lines)
         if arcs:
