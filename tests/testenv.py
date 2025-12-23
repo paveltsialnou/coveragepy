@@ -9,22 +9,23 @@ import os
 
 from coverage import env
 
-REQUESTED_CORE = os.getenv("COVERAGE_CORE", "ctrace")
+# What core are we using, either requested or defaulted?
+CORE = os.getenv("COVERAGE_CORE", "sysmon" if env.SYSMON_DEFAULT else "ctrace")
 
-REQUESTED_TRACER_CLASS = {
+TRACER_CLASS = {
     "ctrace": "CTracer",
     "pytrace": "PyTracer",
     "sysmon": "SysMonitor",
-}[REQUESTED_CORE]
+}[CORE]
 
 # Are we testing the C-implemented trace function?
-C_TRACER = REQUESTED_CORE == "ctrace"
+C_TRACER = CORE == "ctrace"
 
 # Are we testing the Python-implemented trace function?
-PY_TRACER = REQUESTED_CORE == "pytrace"
+PY_TRACER = CORE == "pytrace"
 
 # Are we testing the sys.monitoring implementation?
-SYS_MON = REQUESTED_CORE == "sysmon"
+SYS_MON = CORE == "sysmon"
 
 # Are we using a settrace function as a core?
 SETTRACE_CORE = C_TRACER or PY_TRACER

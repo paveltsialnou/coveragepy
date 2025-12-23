@@ -72,7 +72,7 @@ def set_warnings() -> None:
 
     # For when our own tests can't use sysmon though it was requested.
     warnings.filterwarnings("ignore", r".*no-sysmon")
-    if testenv.REQUESTED_CORE != "ctrace":
+    if testenv.CORE != "ctrace":
         warnings.filterwarnings("ignore", r".*no-ctracer")
 
 
