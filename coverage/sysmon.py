@@ -262,7 +262,7 @@ class SysMonitor(Tracer):
                 register(events.LINE, self.sysmon_line_arcs)
                 if env.PYBEHAVIOR.branch_right_left:
                     register(
-                        events.BRANCH_RIGHT,  # type:ignore[attr-defined]
+                        events.BRANCH_RIGHT,
                         self.sysmon_branch_either,
                     )
                     register(
@@ -388,10 +388,7 @@ class SysMonitor(Tracer):
                         local_events = events.PY_RETURN | events.PY_RESUME | events.LINE
                         if self.trace_arcs:
                             assert env.PYBEHAVIOR.branch_right_left
-                            local_events |= (
-                                events.BRANCH_RIGHT  # type:ignore[attr-defined]
-                                | events.BRANCH_LEFT
-                            )
+                            local_events |= events.BRANCH_RIGHT | events.BRANCH_LEFT
                         sys_monitoring.set_local_events(self.myid, code, local_events)
 
                         if LOG:  # pragma: debugging

@@ -317,8 +317,8 @@ class JsonReportTest(UsingModulesMixin, CoverageTest):
     def test_regions(self, branch: bool) -> None:
         cov = coverage.Coverage(branch=branch)
 
-        d_branch_data = None
-        empty_branches = None
+        d_branch_data: dict[str, Any] | None = None
+        empty_branches: dict[str, Any] | None = None
         if branch:
             d_branch_data = {
                 "executed_branches": [],
