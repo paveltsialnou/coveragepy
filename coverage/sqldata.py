@@ -1191,13 +1191,13 @@ def filename_suffix(suffix: str | bool | None) -> str | None:
 
 
 # A regex to match parallel file name suffixes, with named groups.
-# We combine this with other regexes, so can't use verbose syntax.
-SUFFIX_PATTERN = (
-    r"\.(?P<host>[^.]+)"
-    + r"\.pid(?P<pid>\d+)"
-    + rf"\.X(?P<random>\w{{{NRAND}}})x"
-    + rf"(\.H(?P<hash>\w{{{NHASH}}}h))?"
-)
+# We combine this with other regexes, so be careful with flags.
+SUFFIX_PATTERN = rf"""(?x:              # re.VERBOSE, but only for part of the pattern
+    \.(?P<host>[^.]+)                   # .hostname
+    \.pid(?P<pid>\d+)                   # .pid1234
+    \.X(?P<random>\w{{{NRAND}}})x       # .Xabc123x
+    (\.H(?P<hash>\w{{{NHASH}}}h))?      # .Habcdef1234h (optional)
+    )"""
 
 
 def filename_match(filename: str) -> re.Match[str] | None:
