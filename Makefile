@@ -130,14 +130,17 @@ KITBIN = .tox/$(KITVER)/bin
 $(KITBIN):
 	tox -q -e $(KITVER) --notest
 
+PIP_COMPILE = uv pip compile -q --universal ${COMPILE_OPTS}
+
 # Limit to packages that were released more than 10 days ago.
 # https://blog.yossarian.net/2025/11/21/We-should-all-be-using-dependency-cooldowns
-PIP_COMPILE = uv pip compile -q --universal --exclude-newer=$$(date -v-10d +%Y-%m-%d) ${COMPILE_OPTS}
+upgrade: export UV_EXCLUDE_NEWER=P10D
 upgrade: 				#- Update the *.pip files with the latest packages satisfying *.in files.
 	$(MAKE) _upgrade COMPILE_OPTS="--upgrade"
 
+# Upgrade just one package, with no cooldown.
 upgrade_one:				#- Update the *.pip files for one package. `make upgrade_one package=...`
-	@test -n "$(package)" || { echo "\nUsage: make upgrade-one package=...\n"; exit 1; }
+	@test -n "$(package)" || { echo "\nUsage: make upgrade_one package=...\n"; exit 1; }
 	$(MAKE) _upgrade COMPILE_OPTS="--upgrade-package $(package)"
 
 _upgrade: export UV_CUSTOM_COMPILE_COMMAND=make upgrade
