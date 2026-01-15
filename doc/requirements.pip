@@ -10,7 +10,7 @@ attrs==25.4.0
     # via scriv
 babel==2.17.0
     # via sphinx
-certifi==2025.11.12
+certifi==2026.1.4
     # via requests
 charset-normalizer==3.4.4
     # via requests
@@ -79,7 +79,7 @@ roman-numerals==4.1.0
     # via roman-numerals-py
 roman-numerals-py==4.1.0
     # via sphinx
-scriv==1.7.0
+scriv==1.8.0
     # via -r doc/requirements.in
 snowballstemmer==3.0.1
     # via sphinx
