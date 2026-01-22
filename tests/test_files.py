@@ -375,17 +375,28 @@ class MatcherTest(CoverageTest):
         msg = f"File {filepath} should have matched as {matches}"
         assert matches == matcher.match(canonical), msg
 
-    def test_tree_matcher(self) -> None:
-        case_folding = env.WINDOWS
-        matches_to_try = [
-            (self.make_file("sub/file1.py"), True),
-            (self.make_file("sub/file2.c"), True),
-            (self.make_file("sub2/file3.h"), False),
-            (self.make_file("sub3/file4.py"), True),
-            (self.make_file("sub3/file5.c"), False),
-            (self.make_file("sub4/File5.py"), case_folding),
-            (self.make_file("sub5/file6.py"), case_folding),
-        ]
+    @pytest.mark.parametrize(
+        "filepath, expected_match",
+        [
+            ("sub/file1.py", True),
+            ("sub/file2.c", True),
+            ("sub2/file3.h", False),
+            ("sub3/file4.py", True),
+            ("sub3/file5.c", False),
+            ("sub4/File5.py", env.WINDOWS),
+            ("sub5/file6.py", env.WINDOWS),
+        ],
+    )
+    def test_tree_matcher(self, filepath: str, expected_match: bool) -> None:
+        # Create all files that TreeMatcher needs
+        self.make_file("sub/file1.py")
+        self.make_file("sub/file2.c")
+        self.make_file("sub2/file3.h")
+        self.make_file("sub3/file4.py")
+        self.make_file("sub3/file5.c")
+        self.make_file("sub4/File5.py")
+        self.make_file("sub5/file6.py")
+
         trees = [
             files.canonical_filename("sub"),
             files.canonical_filename("sub3/file4.py"),
@@ -394,11 +405,11 @@ class MatcherTest(CoverageTest):
         ]
         tm = TreeMatcher(trees)
         assert tm.info() == sorted(trees)
-        for filepath, matches in matches_to_try:
-            self.assertMatches(tm, filepath, matches)
+        self.assertMatches(tm, filepath, expected_match)
 
-    def test_module_matcher(self) -> None:
-        matches_to_try = [
+    @pytest.mark.parametrize(
+        "modulename, expected_match",
+        [
             ("test", True),
             ("trash", False),
             ("testing", False),
@@ -413,26 +424,37 @@ class MatcherTest(CoverageTest):
             ("__main__", False),
             ("mymain", True),
             ("yourmain", False),
-        ]
+        ],
+    )
+    def test_module_matcher(self, modulename: str, expected_match: bool) -> None:
         modules = ["test", "py.test", "mymain"]
         mm = ModuleMatcher(modules)
         assert mm.info() == modules
-        for modulename, matches in matches_to_try:
-            assert mm.match(modulename) == matches, modulename
+        assert mm.match(modulename) == expected_match, modulename
 
-    def test_glob_matcher(self) -> None:
-        matches_to_try = [
-            (self.make_file("sub/file1.py"), True),
-            (self.make_file("sub/file2.c"), False),
-            (self.make_file("sub2/file3.h"), True),
-            (self.make_file("sub2/sub/file3.h"), True),
-            (self.make_file("sub3/file4.py"), True),
-            (self.make_file("sub3/file5.c"), False),
-        ]
+    @pytest.mark.parametrize(
+        "filepath, expected_match",
+        [
+            ("sub/file1.py", True),
+            ("sub/file2.c", False),
+            ("sub2/file3.h", True),
+            ("sub2/sub/file3.h", True),
+            ("sub3/file4.py", True),
+            ("sub3/file5.c", False),
+        ],
+    )
+    def test_glob_matcher(self, filepath: str, expected_match: bool) -> None:
+        # Create all files that GlobMatcher needs
+        self.make_file("sub/file1.py")
+        self.make_file("sub/file2.c")
+        self.make_file("sub2/file3.h")
+        self.make_file("sub2/sub/file3.h")
+        self.make_file("sub3/file4.py")
+        self.make_file("sub3/file5.c")
+
         fnm = GlobMatcher(["*.py", "*/sub2/*"])
         assert fnm.info() == ["*.py", "*/sub2/*"]
-        for filepath, matches in matches_to_try:
-            self.assertMatches(fnm, filepath, matches)
+        self.assertMatches(fnm, filepath, expected_match)
 
     def test_glob_matcher_overload(self) -> None:
         fnm = GlobMatcher(["*x%03d*.txt" % i for i in range(500)])
