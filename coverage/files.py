@@ -264,14 +264,14 @@ class TreeMatcher(Matcher):
         super().__init__(self.original_paths, name=name, caption=caption, debug=debug)
         self.paths = []
         for p in paths:
-            ap = os.path.normcase(p)
+            ap = abs_file(p)
             if ap != p and debug:
                 debug(f"        Normalized {p!r} to {ap!r}")
             self.paths.append(ap)
 
     def match(self, fpath: str) -> bool:  # pylint: disable=arguments-renamed
         """Does `fpath` indicate a file in one of our trees?"""
-        fpath = os.path.normcase(fpath)
+        fpath = abs_file(fpath)
         for p in self.paths:
             if fpath.startswith(p):
                 if fpath == p:

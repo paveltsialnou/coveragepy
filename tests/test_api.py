@@ -17,6 +17,7 @@ import textwrap
 
 from collections.abc import Callable, Iterable
 from typing import cast
+from unittest import mock
 
 import pytest
 
@@ -183,6 +184,41 @@ class ApiTest(CoverageTest):
         # but none were in random.py
         _, statements, missing, _ = cov1.analysis("random.py")
         assert statements == missing
+
+    def test_stdlib_symlink(self) -> None:
+        # Find the stdlib and make a symlink to it.
+        import colorsys
+
+        stdlib_dir = os.path.dirname(colorsys.__file__)
+        os.symlink(stdlib_dir, "myliblink")
+
+        sys.path.insert(0, os.path.abspath("myliblink"))
+        del sys.modules["colorsys"]
+
+        class FakeSysconfig:
+            """A fake for the sysconfig module."""
+
+            def get_scheme_names(self) -> list[str]:  # pylint: disable=missing-function-docstring
+                return ["xyzzy"]
+
+            def get_paths(self, _: str) -> dict[str, str]:  # pylint: disable=missing-function-docstring
+                return {
+                    "stdlib": os.path.abspath("myliblink"),
+                }
+
+        self.make_file(
+            "mymain.py",
+            """\
+            import colorsys
+            hls = colorsys.rgb_to_hls(1, 0, 0)
+            """,
+        )
+
+        with mock.patch.object(coverage.inorout, "sysconfig", FakeSysconfig()):
+            cov = coverage.Coverage()
+            self.start_import_stop(cov, "mymain")
+        files = cov.get_data().measured_files()
+        assert not any(os.path.basename(f) == "colorsys.py" for f in files)
 
     def test_exclude_list(self) -> None:
         cov = coverage.Coverage()

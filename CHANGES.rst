@@ -23,10 +23,15 @@ upgrading your version of coverage.py.
 Unreleased
 ----------
 
+- Fix: when Python is installed via symlinks, for example with Homebrew, the
+  standard library files could be incorrectly included in coverage reports.
+  This is now fixed, closing `issue 2115`_.
+
 - Fix: if a data file is created with no read permissions, the combine step
   would fail completely. Now a warning is issued and the file is skipped.
   Closes `issue 2117`_.
 
+.. _issue 2115: https://github.com/coveragepy/coveragepy/issues/2115
 .. _issue 2117: https://github.com/coveragepy/coveragepy/issues/2117
 
 

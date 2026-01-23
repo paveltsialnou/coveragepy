@@ -129,7 +129,8 @@ def add_sysconfig_paths(paths: set[str], path_names: list[str]) -> None:
     for scheme in scheme_names:
         config_paths = sysconfig.get_paths(scheme)
         for path_name in path_names:
-            paths.add(config_paths[path_name])
+            if path_name in config_paths:
+                paths.add(config_paths[path_name])
 
 
 def add_stdlib_paths(paths: set[str]) -> None:
