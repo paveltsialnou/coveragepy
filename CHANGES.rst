@@ -23,7 +23,13 @@ upgrading your version of coverage.py.
 Unreleased
 ----------
 
-Nothing yet.
+- Fix: in some situations, third-party code was measured when it shouldn't have
+  been, slowing down test execution. This happened with layered virtual
+  environments such as uv sometimes makes. The problem is fixed, closing `issue
+  2082`_. Now any directory on sys.path that is inside a virtualenv is
+  considered third-party code.
+
+.. _issue 2082: https://github.com/coveragepy/coveragepy/issues/2082
 
 
 .. start-releases
