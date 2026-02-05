@@ -23,7 +23,12 @@ upgrading your version of coverage.py.
 Unreleased
 ----------
 
-Nothing yet.
+- Fix: the third-party code fix in 7.13.3 required examining the parent
+  directories where coverage was run. In the unusual situation that one of the
+  parent directories is unreadable, a PermissionError would occur, as
+  described in `issue 2129`_. This is now fixed.
+
+.. _issue 2129: https://github.com/coveragepy/coveragepy/issues/2129
 
 
 .. start-releases
