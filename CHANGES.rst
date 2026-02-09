@@ -20,8 +20,12 @@ upgrading your version of coverage.py.
     ..  Version 9.8.1 — 2027-07-27
     ..  --------------------------
 
-Unreleased
-----------
+.. start-releases
+
+.. _changes_7-13-4:
+
+Version 7.13.4 — 2026-02-09
+---------------------------
 
 - Fix: the third-party code fix in 7.13.3 required examining the parent
   directories where coverage was run. In the unusual situation that one of the
@@ -38,8 +42,6 @@ Unreleased
 .. _issue 2129: https://github.com/coveragepy/coveragepy/issues/2129
 .. _pull 2130: https://github.com/coveragepy/coveragepy/pull/2130
 
-
-.. start-releases
 
 .. _changes_7-13-3:
 
